@@ -27,7 +27,7 @@ FRONTEND_DIR = Path(__file__).resolve().parent.parent / "frontend"
 app = Flask(__name__, static_folder=str(FRONTEND_DIR), static_url_path="")
 
 # Free-tier friendly, fast, and supports vision.
-MODEL = "gemini-2.5-flash"
+MODEL = "gemini-3.5-flash"
 
 
 def extract_json(text: str):
