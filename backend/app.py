@@ -44,10 +44,13 @@ def index():
 @app.route("/api/scan", methods=["POST"])
 def scan():
     data = request.get_json(force=True)
-    image_b64 = data.get("image")
-    media_type = data.get("media_type", "image/jpeg")
+    images = data.get("images", [])
+    
+    # Fallback for old requests
+    if not images and data.get("image"):
+        images = [{"image": data.get("image"), "media_type": data.get("media_type", "image/jpeg")}]
 
-    if not image_b64:
+    if not images:
         return jsonify({"error": "No image provided"}), 400
 
     prompt = (
@@ -74,13 +77,17 @@ def scan():
     )
 
     try:
-        image_bytes = base64.b64decode(image_b64)
+        contents = []
+        for img_obj in images:
+            img_b64 = img_obj.get("image", "")
+            m_type = img_obj.get("media_type", "image/jpeg")
+            if img_b64:
+                contents.append({"mime_type": m_type, "data": base64.b64decode(img_b64)})
+        contents.append(prompt)
+
         model = genai.GenerativeModel(MODEL)
         response = model.generate_content(
-            [
-                {"mime_type": media_type, "data": image_bytes},
-                prompt,
-            ],
+            contents,
             generation_config={"temperature": 0.2},
         )
         ingredients = extract_json(response.text)
@@ -95,6 +102,7 @@ def scan():
 def recipes():
     data = request.get_json(force=True)
     ingredients = data.get("ingredients", [])
+    preferences = data.get("preferences", "").strip()
 
     if not ingredients:
         return jsonify({"error": "No ingredients provided"}), 400
@@ -124,6 +132,13 @@ def recipes():
         recipe_count = 3
         scale_note = "Suggest 3 recipes with some variety between them."
 
+    pref_note = ""
+    if preferences and preferences.lower() != "none":
+        pref_note = (
+            f"DIETARY PREFERENCES/RESTRICTIONS: {preferences}. "
+            "You MUST ensure all recipes strictly adhere to these restrictions.\n\n"
+        )
+
     prompt = (
         f"I have these ingredients available: {', '.join(ingredients)}. "
         "Assume a typical Indian household pantry is also available: "
@@ -132,6 +147,7 @@ def recipes():
         "and green chillies (only use the ones that make sense for the "
         "dish — don't force every staple into every recipe).\n\n"
         f"{scale_note}\n\n"
+        f"{pref_note}"
         "Make them **in an Indian home-cooking style** (e.g. a sabzi, "
         "dal, curry, stir-fry/bhurji, paratha filling, or similar "
         "everyday household preparation — not Western-style dishes), "

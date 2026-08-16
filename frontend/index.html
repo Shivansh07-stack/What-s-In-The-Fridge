@@ -1,46 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>What's in the Fridge</title>
-<link rel="stylesheet" href="style.css">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-</head>
-<body>
-<div class="wrap">
-  <h1>What's in the fridge?</h1>
-  <p class="sub">Snap a photo of your fridge or pantry. It'll spot what you've got and suggest something to cook.</p>
 
-  <div class="fridge">
-    <p class="fridge-label">Detected ingredients</p>
-    <div class="magnets" id="magnets">
-      <span class="empty-hint" id="emptyHint">Nothing yet — upload a photo below</span>
+<head>
+  <meta charset="UTF-8">
+  <title>What's in the Fridge</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="wrap">
+    <h1>What's in the fridge?</h1>
+    <p class="sub">Snap a photo of your fridge or pantry. It'll spot what you've got and suggest something to cook.</p>
+
+    <div class="fridge">
+      <p class="fridge-label">Detected ingredients</p>
+      <div class="magnets" id="magnets">
+        <span class="empty-hint" id="emptyHint">Nothing yet — upload a photo below</span>
+      </div>
+    </div>
+
+    <form class="add-row" id="addForm">
+      <input type="text" id="addInput" placeholder="Missed something? Add it here (e.g. butter)" autocomplete="off">
+      <button type="submit">Add</button>
+    </form>
+    <p class="hint-text">Click any tag above to remove it.</p>
+
+    <div class="upload-row">
+      <label class="drop" id="drop" for="fileInput">
+        <span id="dropText">Click to choose photos, or drag them here</span>
+      </label>
+      <input type="file" id="fileInput" accept="image/*" multiple>
+      <button id="scanBtn" disabled>Scan photo</button>
+    </div>
+    <div class="status" id="status"></div>
+
+    <div class="actions">
+      <select id="dietPref" class="diet-select">
+        <option value="None">No dietary restrictions</option>
+        <option value="Vegetarian">Vegetarian</option>
+        <option value="Vegan">Vegan</option>
+        <option value="Gluten-Free">Gluten-Free</option>
+        <option value="Dairy-Free">Dairy-Free</option>
+        <option value="Keto">Keto</option>
+      </select>
+      <button class="accent" id="recipeBtn" disabled>Suggest recipes →</button>
+    </div>
+
+    <div id="recipeSection"></div>
+
+    <div class="history-section" id="historySection" style="display: none;">
+      <h2 class="section-title">Past Recipes</h2>
+      <div id="historyList"></div>
     </div>
   </div>
 
-  <form class="add-row" id="addForm">
-    <input type="text" id="addInput" placeholder="Missed something? Add it here (e.g. butter)" autocomplete="off">
-    <button type="submit">Add</button>
-  </form>
-  <p class="hint-text">Click any tag above to remove it.</p>
-
-  <div class="upload-row">
-    <label class="drop" id="drop" for="fileInput">
-      <span id="dropText">Click to choose a photo, or drag one here</span>
-    </label>
-    <input type="file" id="fileInput" accept="image/*">
-    <button id="scanBtn" disabled>Scan photo</button>
-  </div>
-  <div class="status" id="status"></div>
-
-  <div class="actions">
-    <button class="accent" id="recipeBtn" disabled>Suggest recipes →</button>
-  </div>
-
-  <div id="recipeSection"></div>
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
+
 </html>
